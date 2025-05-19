@@ -1,0 +1,40 @@
+---
+import createUser from "../db/createUser";
+import Basic from "../layouts/basic.astro";
+
+export const prerender = false;
+let loginError;
+try {
+  if (Astro.request.method !== "POST") {
+    throw new Error("");
+  }
+  const registerData = await Astro.request.formData();
+
+  const email = registerData.get("email");
+  const password = registerData.get("password");
+  const name = registerData.get("name");
+
+  if (!email || !password || !name) {
+    throw new Error("Complete dataset not provided");
+  }
+
+  await createUser(email as string, password as string, name as string);
+} catch (err) {
+  if (Astro.request.method === "POST") {
+    loginError = err;
+  }
+}
+---
+
+<Basic>
+  {loginError}
+  <form action="" method="POST">
+    <label for="name">name</label>
+    <input type="text" name="name" id="name" required />
+    <label for="email">email</label>
+    <input type="email" name="email" id="email" required />
+    <label for="password">password</label>
+    <input type="password" name="password" id="password" required />
+    <button type="submit">zarejestruj się</button>
+  </form>
+</Basic>

@@ -1,0 +1,63 @@
+---
+import questions from "../../db/questions";
+import Basic from "../../layouts/basic.astro";
+import type { GetStaticPaths } from "astro";
+export const getStaticPaths = (() =>
+  questions.map((question) => ({
+    params: { questionID: question["Numer pytania"] },
+  }))) satisfies GetStaticPaths;
+
+interface Params {
+  questionID: string;
+}
+
+const questionID = Number(Astro.params.questionID);
+const question = questions.find((question) => question["Numer pytania"] === questionID) as Question;
+
+const answers = [];
+const booleanAnswer = !(question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź C"]);
+
+const answerIndex = booleanAnswer
+  ? Number(question["Poprawna odp"] === "Nie")
+  : question["Poprawna odp"].charCodeAt(0) - 65;
+
+if (question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź C"]) {
+  answers.push(question["Odpowiedź A"]);
+  answers.push(question["Odpowiedź B"]);
+  answers.push(question["Odpowiedź C"]);
+} else {
+  answers.push("TAK");
+  answers.push("NIE");
+}
+---
+
+<Basic>
+  <h1>{question["Pytanie"]}</h1>
+  {
+    answers.map((answer, i) => (
+      <button class="answer-btn" data-correct={i === answerIndex ? "true" : ""}>
+        {answer}
+      </button>
+    ))
+  }
+  
+</Basic>
+<script>
+  const answerBtns = [...document.querySelectorAll(".answer-btn")] as HTMLButtonElement[];
+  const correntAnswerBtn = answerBtns.find((answerBtn) => answerBtn.getAttribute("data-correct")) as HTMLButtonElement;
+  const wrongAnswerBtns = answerBtns.filter((answerBtn) => !answerBtn.getAttribute("data-correct"));
+
+  const handleAnswerBtnClick = (e: Event) => {
+    const answerBtnClicked = e.target as HTMLButtonElement;
+    const isAnswerCorrect = !!answerBtnClicked.getAttribute("data-correct");
+
+    correntAnswerBtn.classList.add("bg-green-500");
+    if (!isAnswerCorrect) {
+      wrongAnswerBtns.forEach((wrongAnswerBtn) => wrongAnswerBtn.classList.add("bg-red-500"));
+    }
+
+    answerBtns.forEach((answerBtn) => answerBtn.removeEventListener("click", handleAnswerBtnClick));
+  };
+
+  answerBtns.forEach((answerBtn) => answerBtn.addEventListener("click", handleAnswerBtnClick));
+</script>

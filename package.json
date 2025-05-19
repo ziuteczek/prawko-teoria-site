@@ -1,0 +1,27 @@
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@mux/mux-player": "^3.4.0",
+    "@tailwindcss/vite": "^4.1.6",
+    "@types/nodemailer": "^6.4.17",
+    "argon2": "^0.43.0",
+    "astro": "^5.7.12",
+    "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
+    "nodemailer": "^7.0.3",
+    "tailwindcss": "^4.1.6"
+  },
+  "devDependencies": {
+    "@astrojs/node": "^9.2.1",
+    "@types/jsonwebtoken": "^9.0.9"
+  }
+}
