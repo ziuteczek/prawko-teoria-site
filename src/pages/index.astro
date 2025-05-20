@@ -1,9 +1,19 @@
 ---
 import Basic from "../layouts/basic.astro";
-
-
+import questions from "../db/questions.json";
 ---
+
 <Basic>
-    <a href="login" data-astro-prefetch="load">login</a>
-    <a href="register" data-astro-prefetch="load">register</a>
+  <a href="login" data-astro-prefetch="load">login</a>
+  <a href="register" data-astro-prefetch="load">register</a>
+  <select class="question-select">
+    {questions.map((question) => <option value={question["Numer pytania"]}>{question["Numer pytania"]}</option>)}
+  </select>
 </Basic>
+<script>
+  const questionSelect = document.querySelector(".question-select") as HTMLSelectElement;
+  questionSelect.addEventListener("change", () => {
+    window.location.assign(`${"http://localhost:4321/"}pytanie/${questionSelect.value}`);
+    console.log("elo")
+  });
+</script>

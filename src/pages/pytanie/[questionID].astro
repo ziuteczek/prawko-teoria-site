@@ -1,7 +1,11 @@
 ---
+import { Image } from "astro:assets";
 import questions from "../../db/questions";
 import Basic from "../../layouts/basic.astro";
+import videoThumbnail from "../../assets/camera-thumbnail.png";
+
 import type { GetStaticPaths } from "astro";
+
 export const getStaticPaths = (() =>
   questions.map((question) => ({
     params: { questionID: question["Numer pytania"] },
@@ -13,6 +17,8 @@ interface Params {
 
 const questionID = Number(Astro.params.questionID);
 const question = questions.find((question) => question["Numer pytania"] === questionID) as Question;
+
+const questionsImg = import.meta.glob<{ default: ImageMetadata }>("/src/assets/questionsImg/*.{jpeg,jpg,png,gif}");
 
 const answers = [];
 const booleanAnswer = !(question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź C"]);
@@ -40,7 +46,21 @@ if (question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź
       </button>
     ))
   }
-  
+  {
+    question.Media?.endsWith(".jpg") && (
+      <Image src={questionsImg[`/src/assets/questionsImg/${question.Media}`]()} alt="Obrazek do pytania" />
+    )
+  }
+  {
+    question.Media?.endsWith(".mp4") && (
+      <video
+        src={`https://storage.googleapis.com/prawko-teoria-vid/visualisations2/${question.Media}`}
+        poster={videoThumbnail.src}
+        class="question-video-player"
+        preload="auto"
+      />
+    )
+  }
 </Basic>
 <script>
   const answerBtns = [...document.querySelectorAll(".answer-btn")] as HTMLButtonElement[];
@@ -60,4 +80,12 @@ if (question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź
   };
 
   answerBtns.forEach((answerBtn) => answerBtn.addEventListener("click", handleAnswerBtnClick));
+</script>
+<script>
+  const video = document.querySelector(".question-video-player") as HTMLVideoElement;
+  const handleVideoClick = () => {
+    video.play();
+    video.removeEventListener("click", handleVideoClick);
+  };
+  video.addEventListener("click", handleVideoClick);
 </script>
