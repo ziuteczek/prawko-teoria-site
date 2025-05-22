@@ -2,11 +2,18 @@ import { users } from "./connection";
 import * as argon from "argon2";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { emailRegex,passwordRegex } from "../helpers";
+
 dotenv.config();
 
-const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/;
-const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+/**
+ * Authenticates a user by verifying their email and password, and returns a signed JWT token upon successful authentication.
+ *
+ * @param email - The email address of the user attempting to log in.
+ * @param password - The password provided by the user.
+ * @returns A signed JSON Web Token (JWT) containing the user's ID, name, and email, valid for 7 days.
+ */
 async function logInUser(email: string, password: string) {
   if (!passwordRegex.test(password)) {
     throw new Error("password wrongly formated");
@@ -24,7 +31,7 @@ async function logInUser(email: string, password: string) {
   }
 
   return jwt.sign(
-    { id: user._id.id, name: user.name, email: email },
+    { id: user._id.toString(), name: user.name, email: email },
     process.env.JWT_SECRET as string,
     { expiresIn: "7d" }
   );

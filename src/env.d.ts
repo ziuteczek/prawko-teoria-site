@@ -13,13 +13,11 @@ interface userObj {
 
 declare namespace App {
   interface Locals {
+    id: string |null;
+    name: string |null;
     email: string | null;
-    name: string | null;
-    loggedIn: boolean | null;
-  }
-  interface props {
-    email: string | null;
-    name: string | null;
+    iat: number | null;
+    exp: number | null;
   }
 }
 interface Token {

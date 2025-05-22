@@ -1,24 +1,29 @@
 ---
 import logInUser from "../db/loginUser";
+import Basic from "../layouts/basic.astro";
+export const prerender = false;
 
-export const prerender = true;
 let loginError;
 try {
   if (Astro.request.method !== "POST") {
     throw new Error("");
   }
-  const loginData = await Astro.request.formData();
 
-  const email = loginData.get("email");
-  const password = loginData.get("password");
-  const saveLogin = loginData.get("save-login");
+  const logInData = await Astro.request.formData();
 
-  if (!email || !password || !saveLogin) {
+  const email = logInData.get("email");
+  const password = logInData.get("password");
+
+  if (!email || !password) {
     throw new Error("Complete dataset not provided");
   }
 
-  await logInUser(email as string, password as string);
-  return Astro.redirect("/");
+  const token = await logInUser(email as string, password as string);
+  const weekDurain = 604_800;
+
+  Astro.cookies.set("token", token, { maxAge: weekDurain});
+
+  return Astro.redirect(process.env.URI_APP);
 } catch (err) {
   if (Astro.request.method === "POST") {
     loginError = err;
@@ -26,13 +31,13 @@ try {
 }
 ---
 
-{loginError}
-<form action="login" method="POST">
-  <label for="email">email</label>
-  <input type="email" name="email" id="email" required />
-  <label for="password">password</label>
-  <input type="password" name="password" id="password" required />
-  <label for="save-login">Save login</label>
-  <input type="checkbox" name="save-login" id="save-login" />
-  <button type="submit">login</button>
-</form>
+<Basic>
+  {loginError}
+  <form action="" method="POST">
+    <label for="email">email</label>
+    <input type="email" name="email" id="email" required />
+    <label for="password">password</label>
+    <input type="password" name="password" id="password" required />
+    <button type="submit">zarejestruj się</button>
+  </form>
+</Basic>

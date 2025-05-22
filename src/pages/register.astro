@@ -1,13 +1,14 @@
 ---
 import createUser from "../db/createUser";
 import Basic from "../layouts/basic.astro";
-
 export const prerender = false;
+
 let loginError;
 try {
   if (Astro.request.method !== "POST") {
     throw new Error("");
   }
+  
   const registerData = await Astro.request.formData();
 
   const email = registerData.get("email");

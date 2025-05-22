@@ -8,9 +8,8 @@ import tailwindcss from "@tailwindcss/vite";
 // https://astro.build/config
 export default defineConfig({
   integrations: [],
-  output: "static",
+  output: "server",
   prefetch: true,
-
   adapter: node({
     mode: "standalone",
   }),
