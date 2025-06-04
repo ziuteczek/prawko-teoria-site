@@ -1,0 +1,25 @@
+---
+import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
+import { users } from "../../db/connection";
+Astro.response.headers.set("Access-Control-Allow-Credentials", "true");
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const token = urlParams.get("token");
+
+if (!token) {
+  return Astro.redirect(`/?verification=fail`);
+}
+
+const userID = jwt.verify(token, process.env.JWT_SECRET as string);
+
+if (typeof userID !== "string") {
+  return Astro.redirect(`/?verification=fail`);
+}
+
+await users.findOneAndUpdate(
+  { _id: new ObjectId(userID) },
+  { $unset: { unverified: "" } }
+);
+return Astro.redirect(`/?verification=succes`);
+---

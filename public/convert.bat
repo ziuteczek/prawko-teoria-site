@@ -8,5 +8,5 @@ for %%f in ("visualisations\*.wmv") do (
     ffmpeg -i "visualisations\%%~nxf" -r 30 -c:v h264_nvenc -preset fast -b:v 5M -movflags +faststart -an "visualisations2\!filename!.mp4"
 )
 
-echo Fast NVIDIA accelerated 30fps conversion complete.
+echo complete.
 pause

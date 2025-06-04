@@ -1,43 +1,27 @@
 ---
-import logInUser from "../db/loginUser";
 import Basic from "../layouts/basic.astro";
-export const prerender = false;
+export const prerender = true;
 
-let loginError;
-try {
-  if (Astro.request.method !== "POST") {
-    throw new Error("");
-  }
-
-  const logInData = await Astro.request.formData();
-
-  const email = logInData.get("email");
-  const password = logInData.get("password");
-
-  if (!email || !password) {
-    throw new Error("Complete dataset not provided");
-  }
-
-  const token = await logInUser(email as string, password as string);
-  const weekDurain = 604_800;
-
-  Astro.cookies.set("token", token, { maxAge: weekDurain});
-
-  return Astro.redirect(process.env.URI_APP);
-} catch (err) {
-  if (Astro.request.method === "POST") {
-    loginError = err;
-  }
-}
+const serverURL = process.env.SERVER_URL as string;
 ---
 
 <Basic>
-  {loginError}
-  <form action="" method="POST">
+  <form action={serverURL + "login"} method="POST" class="login-form">
     <label for="email">email</label>
     <input type="email" name="email" id="email" required />
-    <label for="password">password</label>
-    <input type="password" name="password" id="password" required />
-    <button type="submit">zarejestruj się</button>
+    <label for="password">hasło</label>
+    <input
+      type="password"
+      name="password"
+      id="password"
+      required
+      pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$"
+      title="8-32 characters containt at least one lowercase and uppercase letter and at least one number"
+    />
+    <label for="keepLogin">Nie wylogowuj</label>
+    <input type="checkbox" name="keepLogin" id="keepLogin" />
+    <button type="submit">zaloguj się</button>
   </form>
 </Basic>
+
+<script src="../script/sendForm.ts"></script>

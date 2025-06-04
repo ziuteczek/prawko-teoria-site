@@ -6,6 +6,7 @@ import videoThumbnail from "../../assets/camera-thumbnail.png";
 
 import type { GetStaticPaths } from "astro";
 
+export const prerender = true
 export const getStaticPaths = (() =>
   questions.map((question) => ({
     params: { questionID: question["Numer pytania"] },
@@ -18,7 +19,7 @@ interface Params {
 const questionID = Number(Astro.params.questionID);
 const question = questions.find((question) => question["Numer pytania"] === questionID) as Question;
 
-const questionsImg = import.meta.glob<{ default: ImageMetadata }>("/src/assets/questionsImg/*.{jpeg,jpg,png,gif}");
+const questionsImg = import.meta.glob<{ default: ImageMetadata }>("/src/assets/questionsImg/*.{jpg}");
 
 const answers = [];
 const booleanAnswer = !(question["Odpowiedź A"] && question["Odpowiedź B"] && question["Odpowiedź C"]);
